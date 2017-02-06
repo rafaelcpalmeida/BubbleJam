@@ -10,7 +10,6 @@ import Foundation
 import SpriteKit
 
 class Bubble {
-    
     var size: Int
     var x: Int
     var y: Int
@@ -20,7 +19,7 @@ class Bubble {
     var duration: TimeInterval = 0
     
     init(width: CGFloat, height: CGFloat, currentPontuation: Int) {
-        self.size = Int(arc4random_uniform(UInt32((Int(width*0.15) + Int(width*0.06)) - (Int(width*0.06))))) + (Int(width*0.06))
+        self.size = Int(arc4random_uniform(UInt32((Int(width*0.15) + Int(width*0.08)) - (Int(width*0.08))))) + (Int(width*0.08))
         
         self.x = Int(arc4random_uniform(UInt32((width - CGFloat(size)) - CGFloat(size))) + UInt32(size))
         
@@ -47,28 +46,36 @@ class Bubble {
     }
     
     private func getRandomColor() -> UIColor{
-        let randomRed:CGFloat = CGFloat(drand48())
-        let randomGreen:CGFloat = CGFloat(drand48())
-        let randomBlue:CGFloat = CGFloat(drand48())
+        let colors = [UIColor(red:0.08, green:0.52, blue:0.53, alpha:1.0), UIColor(red:0.38, green:0.51, blue:0.18, alpha:1.0), UIColor(red:0.28, green:0.28, blue:0.28, alpha:1.0), UIColor(red:0.90, green:0.90, blue:0.06, alpha:1.0), UIColor(red:0.86, green:0.53, blue:0.20, alpha:1.0)]
+        //blue, green, gray, yellow, orange
         
-        return UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
+        return colors[Int(arc4random_uniform(4) + 1)]
     }
     
     private func getDuration(currentPontuation: Int) -> Double {
         duration = 0
         
         switch (currentPontuation) {
-        case 1..<10:
+        case 1..<5:
             duration = 1.5
             break
-        case 10..<20:
+        case 5..<10:
             duration = 1.25
             break
-        case 20..<30:
-            duration = 1
+        case 10..<15:
+            duration = 1.05
+            break
+        case 15..<22:
+            duration = 0.85
+            break
+        case 22..<28:
+            duration = 0.75
+            break
+        case 28..<35:
+            duration = 0.50
             break
         default:
-            duration = 0.75
+            duration = 0.48
             break
         }
         

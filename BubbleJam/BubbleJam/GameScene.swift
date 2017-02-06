@@ -92,7 +92,7 @@ class GameScene: SKScene {
         
         ballsLayer.addChild(bub.bubble)
         
-        if gameStarted {
+        if gameStarted && !gameOver {
             bub.bubble.run(
                 SKAction.sequence([
                     SKAction.wait(forDuration: bub.duration),
