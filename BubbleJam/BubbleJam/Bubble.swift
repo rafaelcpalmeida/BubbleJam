@@ -19,7 +19,7 @@ class Bubble {
     var duration: TimeInterval = 0
     
     init(width: CGFloat, height: CGFloat, currentPontuation: Int) {
-        self.size = Int(arc4random_uniform(UInt32((Int(width*0.15) + Int(width*0.08)) - (Int(width*0.08))))) + (Int(width*0.08))
+        self.size = Int(arc4random_uniform(UInt32((Int(width*0.10) + Int(width*0.08)) - (Int(width*0.08))))) + (Int(width*0.08))
         
         self.x = Int(arc4random_uniform(UInt32((width - CGFloat(size)) - CGFloat(size))) + UInt32(size))
         
@@ -57,19 +57,19 @@ class Bubble {
         
         switch (currentPontuation) {
         case 1..<5:
-            duration = 1.5
+            duration = 1.3
             break
         case 5..<10:
-            duration = 1.25
+            duration = 1.15
             break
         case 10..<15:
-            duration = 1.05
+            duration = 0.95
             break
         case 15..<22:
-            duration = 0.85
+            duration = 0.80
             break
         case 22..<28:
-            duration = 0.75
+            duration = 0.70
             break
         case 28..<35:
             duration = 0.50
