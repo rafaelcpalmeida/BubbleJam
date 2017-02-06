@@ -13,7 +13,11 @@ import Foundation
 let gameLayer = SKNode()
 let ballsLayer = SKNode()
 let pontuationLabel = SKLabelNode(fontNamed: "Arial")
+let gameOverLabel = SKLabelNode(fontNamed: "Arial")
 var pontuation = 0
+var gameOver = false
+var gameStarted = false
+let numberOfBubbles = 1
 
 class GameScene: SKScene {
     
@@ -41,22 +45,9 @@ class GameScene: SKScene {
     }
     
     override func update(_ currentTime: CFTimeInterval) {
-        /*DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(i)) {
-         self.addBall()
-         i += 1
-         }*/
-        
-        var i = 1
-        
-        while(ballsLayer.children.count < 10) {
-            self.addBall(i: i)
-            i += 1
+        while(ballsLayer.children.count < numberOfBubbles) {
+            self.addBall()
         }
-        
-        //self.removeBalls()
-        
-        //second = 1000000
-        //usleep(11500000)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -64,28 +55,50 @@ class GameScene: SKScene {
             let location = touch.location(in: self)
             let node: SKNode = self.atPoint(location)
             
-            if node.name == "bubble" {
+            if node.name == "bubble" && !gameOver {
+                if !gameStarted {
+                    gameStarted = true
+                }
+                
                 pontuation += 1
                 pontuationLabel.text = "Pontuation: \(pontuation)"
-                node.removeFromParent()
-            } else {
                 
+                node.removeFromParent()
+            } else if !gameOver {
+                for case let bubble as SKShapeNode in ballsLayer.children {
+                    bubble.removeAllActions()
+                }
+                
+                gameOver = true
+                
+                gameOverLabel.text = "Game Over!"
+                gameOverLabel.fontSize = 40
+                gameOverLabel.fontColor = .black
+                gameOverLabel.horizontalAlignmentMode = .center
+                gameOverLabel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+                
+                pontuationLabel.horizontalAlignmentMode = .center
+                pontuationLabel.position = CGPoint(x: self.frame.midX, y: (self.frame.midY-(CGFloat(pontuationLabel.fontSize)+5)))
+                
+                gameLayer.addChild(gameOverLabel)
             }
         }
     }
     
-    func addBall(i: Int) {
+    func addBall() {
         let bub = Bubble(width: size.width, height: size.height)
         
         bub.bubble.name = "bubble"
         
         ballsLayer.addChild(bub.bubble)
         
-        bub.bubble.run(
-            SKAction.sequence([
-                SKAction.wait(forDuration: bub.duration),
-                    SKAction.removeFromParent()
-                ])
-        )
+        if gameStarted {
+            bub.bubble.run(
+                SKAction.sequence([
+                    SKAction.wait(forDuration: bub.duration),
+                        SKAction.removeFromParent()
+                    ])
+            )
+        }
     }
 }
