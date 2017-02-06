@@ -65,11 +65,11 @@ class GameScene: SKScene {
                 
                 node.removeFromParent()
             } else if !gameOver {
+                gameOver = true
+                
                 for case let bubble as SKShapeNode in ballsLayer.children {
                     bubble.removeAllActions()
                 }
-                
-                gameOver = true
                 
                 gameOverLabel.text = "Game Over!"
                 gameOverLabel.fontSize = 40
@@ -86,7 +86,7 @@ class GameScene: SKScene {
     }
     
     func addBall() {
-        let bub = Bubble(width: size.width, height: size.height)
+        let bub = Bubble(width: size.width, height: size.height, currentPontuation: pontuation)
         
         bub.bubble.name = "bubble"
         
