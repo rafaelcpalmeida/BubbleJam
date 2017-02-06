@@ -31,11 +31,7 @@ class GameScene: SKScene {
         ballsLayer.position = CGPoint(x: 0, y: 0)
         gameLayer.addChild(ballsLayer)
         
-        pontuationLabel.text = "Pontuation: 0"
-        pontuationLabel.fontSize = 20
-        pontuationLabel.fontColor = .black
-        pontuationLabel.horizontalAlignmentMode = .left
-        pontuationLabel.position = CGPoint(x: 5.0, y: (self.size.height-(CGFloat(pontuationLabel.fontSize)+1)))
+        placeLabelTopLeft()
         
         gameLayer.addChild(pontuationLabel)
     }
@@ -71,16 +67,16 @@ class GameScene: SKScene {
                     bubble.removeAllActions()
                 }
                 
-                gameOverLabel.text = "Game Over!"
-                gameOverLabel.fontSize = 40
-                gameOverLabel.fontColor = .black
-                gameOverLabel.horizontalAlignmentMode = .center
-                gameOverLabel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
-                
-                pontuationLabel.horizontalAlignmentMode = .center
-                pontuationLabel.position = CGPoint(x: self.frame.midX, y: (self.frame.midY-(CGFloat(pontuationLabel.fontSize)+5)))
-                
-                gameLayer.addChild(gameOverLabel)
+                placeLabelGameOver()
+            } else if gameOver {
+                for case let bubble as SKShapeNode in ballsLayer.children {
+                    bubble.removeFromParent()
+                }
+                gameOverLabel.removeFromParent()
+                pontuation = 0
+                placeLabelTopLeft()
+                gameOver = false
+                addBall()
             }
         }
     }
@@ -100,5 +96,26 @@ class GameScene: SKScene {
                     ])
             )
         }
+    }
+    
+    func placeLabelTopLeft() {
+        pontuationLabel.text = "Pontuation: 0"
+        pontuationLabel.fontSize = 20
+        pontuationLabel.fontColor = .black
+        pontuationLabel.horizontalAlignmentMode = .left
+        pontuationLabel.position = CGPoint(x: 5.0, y: (self.size.height-(CGFloat(pontuationLabel.fontSize)+1)))
+    }
+    
+    func placeLabelGameOver() {
+        gameOverLabel.text = "Game Over!"
+        gameOverLabel.fontSize = 40
+        gameOverLabel.fontColor = .black
+        gameOverLabel.horizontalAlignmentMode = .center
+        gameOverLabel.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+        
+        pontuationLabel.horizontalAlignmentMode = .center
+        pontuationLabel.position = CGPoint(x: self.frame.midX, y: (self.frame.midY-(CGFloat(pontuationLabel.fontSize)+5)))
+        
+        gameLayer.addChild(gameOverLabel)
     }
 }
