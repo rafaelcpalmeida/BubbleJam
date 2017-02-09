@@ -58,7 +58,6 @@ class GameScene: SKScene {
                 }
                 
                 pontuation += bubbles[0].points
-                print(bubbles[0].points)
                 pontuationLabel.text = "Pontuation: \(pontuation)"
                 
                 node.removeFromParent()
