@@ -17,6 +17,7 @@ class Bubble {
     var bubble: SKShapeNode
     var color: UIColor = .black
     var duration: TimeInterval = 0
+    var points: Int = 0
     
     init(width: CGFloat, height: CGFloat, currentPontuation: Int) {
         self.size = Int(arc4random_uniform(UInt32((Int(width*0.09) + Int(width*0.06)) - (Int(width*0.06))))) + (Int(width*0.06))
@@ -34,6 +35,7 @@ class Bubble {
         self.bubble = SKShapeNode(path: path)
         self.color = self.getRandomColor()
         self.duration = self.getDuration(currentPontuation: currentPontuation)
+        self.points = self.getPoint(size: size)
         
         bubble.position = CGPoint(x: x, y: y)
         bubble.setScale(1.0)
@@ -56,29 +58,47 @@ class Bubble {
         duration = 0
         
         switch (currentPontuation) {
-        case 0..<5:
-            duration = 1.3
+        case 0..<20:
+            duration = 1.25
             break
-        case 5..<10:
-            duration = 1.15
+        case 20..<30:
+            duration = 1.10
             break
-        case 10..<15:
-            duration = 0.95
+        case 30..<45:
+            duration = 0.90
             break
-        case 15..<22:
-            duration = 0.80
+        case 45..<60:
+            duration = 0.75
             break
-        case 22..<28:
-            duration = 0.70
+        case 60..<80:
+            duration = 0.65
             break
-        case 28..<35:
-            duration = 0.50
+        case 80..<100:
+            duration = 0.48
             break
         default:
-            duration = 0.48
+            duration = 0.45
             break
         }
         
         return duration
+    }
+    
+    private func getPoint(size: Int) -> Int {
+        var point = 0
+        
+        switch (size) {
+        case 0..<30:
+            point = 5
+            break
+        case 30..<45:
+            point = 3
+            break
+        default:
+            point = 1
+            break
+        }
+        
+        return point
     }
 }

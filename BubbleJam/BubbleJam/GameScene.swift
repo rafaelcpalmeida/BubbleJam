@@ -11,7 +11,8 @@ import GameplayKit
 import Foundation
 
 let gameLayer = SKNode()
-let ballsLayer = SKNode()
+let bubblesLayer = SKNode()
+var bubbles: [Bubble] = []
 let pontuationLabel = SKLabelNode(fontNamed: "Arial")
 let gameOverLabel = SKLabelNode(fontNamed: "Arial")
 var pontuation = 0
@@ -28,8 +29,8 @@ class GameScene: SKScene {
         
         addChild(gameLayer)
         
-        ballsLayer.position = CGPoint(x: 0, y: 0)
-        gameLayer.addChild(ballsLayer)
+        bubblesLayer.position = CGPoint(x: 0, y: 0)
+        gameLayer.addChild(bubblesLayer)
         
         placeLabelTopLeft()
         
@@ -41,7 +42,7 @@ class GameScene: SKScene {
     }
     
     override func update(_ currentTime: CFTimeInterval) {
-        while(ballsLayer.children.count < numberOfBubbles) {
+        while(bubblesLayer.children.count < numberOfBubbles) {
             self.addBall()
         }
     }
@@ -56,26 +57,30 @@ class GameScene: SKScene {
                     gameStarted = true
                 }
                 
-                pontuation += 1
+                pontuation += bubbles[0].points
+                print(bubbles[0].points)
                 pontuationLabel.text = "Pontuation: \(pontuation)"
                 
                 node.removeFromParent()
+                bubbles.remove(at: 0)
             } else if !gameOver {
                 gameOver = true
                 
-                for case let bubble as SKShapeNode in ballsLayer.children {
+                for case let bubble as SKShapeNode in bubblesLayer.children {
                     bubble.removeAllActions()
                 }
                 
                 placeLabelGameOver()
             } else if gameOver {
-                for case let bubble as SKShapeNode in ballsLayer.children {
+                for case let bubble as SKShapeNode in bubblesLayer.children {
                     bubble.removeFromParent()
                 }
+                
                 gameOverLabel.removeFromParent()
                 pontuation = 0
                 placeLabelTopLeft()
                 gameOver = false
+                
                 addBall()
             }
         }
@@ -86,7 +91,9 @@ class GameScene: SKScene {
         
         bub.bubble.name = "bubble"
         
-        ballsLayer.addChild(bub.bubble)
+        bubblesLayer.addChild(bub.bubble)
+        
+        bubbles.append(bub)
         
         if gameStarted && !gameOver {
             bub.bubble.run(
