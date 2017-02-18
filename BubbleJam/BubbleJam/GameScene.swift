@@ -52,7 +52,12 @@ class GameScene: SKScene {
             let location = touch.location(in: self)
             let node: SKNode = self.atPoint(location)
             
-            if node.name == "bubble" && !gameOver {
+            if node.name == "bubble" {
+                if gameOver {
+                    gameOver = false
+                    restartGame()
+                }
+                
                 if !gameStarted {
                     gameStarted = true
                 }
@@ -60,7 +65,10 @@ class GameScene: SKScene {
                 pontuation += bubbles[0].points
                 pontuationLabel.text = "Pontuation: \(pontuation)"
                 
-                node.removeFromParent()
+                node.run(SKAction.fadeAlpha(to: 0, duration: 0.08), completion: {
+                    node.removeFromParent()
+                })
+                
                 bubbles.remove(at: 0)
             } else if !gameOver {
                 gameOver = true
@@ -71,18 +79,21 @@ class GameScene: SKScene {
                 
                 placeLabelGameOver()
             } else if gameOver {
-                for case let bubble as SKShapeNode in bubblesLayer.children {
-                    bubble.removeFromParent()
-                }
-                
-                gameOverLabel.removeFromParent()
-                pontuation = 0
-                placeLabelTopLeft()
-                gameOver = false
-                
-                addBall()
+                restartGame()
             }
         }
+    }
+    
+    private func restartGame() {
+        for case let bubble as SKShapeNode in bubblesLayer.children {
+            bubble.removeFromParent()
+        }
+        
+        gameOverLabel.removeFromParent()
+        pontuation = 0
+        placeLabelTopLeft()
+        
+        addBall()
     }
     
     func addBall() {
@@ -93,6 +104,8 @@ class GameScene: SKScene {
         bubblesLayer.addChild(bub.bubble)
         
         bubbles.append(bub)
+        
+        bub.bubble.run(SKAction.fadeAlpha(to: 0.5, duration: 0.10))
         
         if gameStarted && !gameOver {
             bub.bubble.run(

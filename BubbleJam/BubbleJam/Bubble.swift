@@ -41,6 +41,7 @@ class Bubble {
         bubble.setScale(1.0)
         bubble.strokeColor = color
         bubble.fillColor = color
+        bubble.alpha = 0
     }
     
     required init?(coder aDecoder: NSCoder) {
