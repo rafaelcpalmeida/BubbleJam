@@ -10,17 +10,18 @@ import SpriteKit
 import GameplayKit
 import Foundation
 
-let gameLayer = SKNode()
-let bubblesLayer = SKNode()
-var bubbles: [Bubble] = []
-let pontuationLabel = SKLabelNode(fontNamed: "Arial")
-let gameOverLabel = SKLabelNode(fontNamed: "Arial")
-var pontuation = 0
-var gameOver = false
-var gameStarted = false
-let numberOfBubbles = 1
-
 class GameScene: SKScene {
+    let gameLayer = SKNode()
+    let bubblesLayer = SKNode()
+    var bubbles: [Bubble] = []
+    let pontuationLabel = SKLabelNode(fontNamed: "Arial")
+    let gameOverLabel = SKLabelNode(fontNamed: "Arial")
+    var pontuation = 0
+    var gameOver = false
+    var gameStarted = false
+    let numberOfBubbles = 1
+    let numberOfMissedBubbles = 3
+    var missedBubbles = 0
     
     override init(size: CGSize) {
         super.init(size: size)
@@ -29,12 +30,12 @@ class GameScene: SKScene {
         
         addChild(gameLayer)
         
-        bubblesLayer.position = CGPoint(x: 0, y: 0)
-        gameLayer.addChild(bubblesLayer)
-        
         placeLabelTopLeft()
         
         gameLayer.addChild(pontuationLabel)
+        
+        bubblesLayer.position = CGPoint(x: 0, y: 0)
+        gameLayer.addChild(bubblesLayer)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -42,6 +43,10 @@ class GameScene: SKScene {
     }
     
     override func update(_ currentTime: CFTimeInterval) {
+        if missedBubbles == numberOfMissedBubbles {
+            gameOverFnc()
+        }
+        
         while(bubblesLayer.children.count < numberOfBubbles) {
             self.addBall()
         }
@@ -54,7 +59,6 @@ class GameScene: SKScene {
             
             if node.name == "bubble" {
                 if gameOver {
-                    gameOver = false
                     restartGame()
                 }
                 
@@ -63,6 +67,7 @@ class GameScene: SKScene {
                 }
                 
                 pontuation += bubbles[0].points
+                missedBubbles = 0
                 pontuationLabel.text = "Pontuation: \(pontuation)"
                 
                 node.run(SKAction.fadeAlpha(to: 0, duration: 0.08), completion: {
@@ -71,27 +76,36 @@ class GameScene: SKScene {
                 
                 bubbles.remove(at: 0)
             } else if !gameOver {
-                gameOver = true
-                
-                for case let bubble as SKShapeNode in bubblesLayer.children {
-                    bubble.removeAllActions()
-                }
-                
-                placeLabelGameOver()
+                gameOverFnc()
             } else if gameOver {
                 restartGame()
             }
         }
     }
     
+    private func gameOverFnc() {
+        gameOver = true
+    
+        for case let bubble as SKShapeNode in bubblesLayer.children {
+            bubble.removeAllActions()
+        }
+    
+        placeLabelGameOver()
+    }
+    
     private func restartGame() {
+        gameOverLabel.removeFromParent()
+        
         for case let bubble as SKShapeNode in bubblesLayer.children {
             bubble.removeFromParent()
         }
         
-        gameOverLabel.removeFromParent()
         pontuation = 0
         placeLabelTopLeft()
+        
+        gameOver = false
+        gameStarted = true
+        missedBubbles = 0
         
         addBall()
     }
@@ -108,17 +122,17 @@ class GameScene: SKScene {
         bub.bubble.run(SKAction.fadeAlpha(to: 0.5, duration: 0.10))
         
         if gameStarted && !gameOver {
-            bub.bubble.run(
-                SKAction.sequence([
-                    SKAction.wait(forDuration: bub.duration),
-                        SKAction.removeFromParent()
-                    ])
-            )
+            bub.bubble.run(SKAction.sequence([
+                SKAction.wait(forDuration: bub.duration),
+                SKAction.removeFromParent()
+                ]), completion: {
+                    self.missedBubbles += 1
+            })
         }
     }
     
     func placeLabelTopLeft() {
-        pontuationLabel.text = "Pontuation: 0"
+        pontuationLabel.text = "Pontuation: \(self.pontuation)"
         pontuationLabel.fontSize = 20
         pontuationLabel.fontColor = .black
         pontuationLabel.horizontalAlignmentMode = .left
@@ -126,6 +140,8 @@ class GameScene: SKScene {
     }
     
     func placeLabelGameOver() {
+        gameOverLabel.removeFromParent()
+        
         gameOverLabel.text = "Game Over!"
         gameOverLabel.fontSize = 40
         gameOverLabel.fontColor = .black
