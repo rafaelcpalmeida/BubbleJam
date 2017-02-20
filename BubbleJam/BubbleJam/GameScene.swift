@@ -67,7 +67,6 @@ class GameScene: SKScene {
                 }
                 
                 pontuation += bubbles[0].points
-                missedBubbles = 0
                 pontuationLabel.text = "Pontuation: \(pontuation)"
                 
                 node.run(SKAction.fadeAlpha(to: 0, duration: 0.08), completion: {
@@ -75,7 +74,7 @@ class GameScene: SKScene {
                 })
                 
                 bubbles.remove(at: 0)
-            } else if !gameOver {
+            } else if !gameOver && gameStarted {
                 gameOverFnc()
             } else if gameOver {
                 restartGame()
@@ -85,6 +84,7 @@ class GameScene: SKScene {
     
     private func gameOverFnc() {
         gameOver = true
+        gameStarted = false
     
         for case let bubble as SKShapeNode in bubblesLayer.children {
             bubble.removeAllActions()
@@ -104,7 +104,7 @@ class GameScene: SKScene {
         placeLabelTopLeft()
         
         gameOver = false
-        gameStarted = true
+        //gameStarted = true
         missedBubbles = 0
         
         addBall()
@@ -124,8 +124,9 @@ class GameScene: SKScene {
         if gameStarted && !gameOver {
             bub.bubble.run(SKAction.sequence([
                 SKAction.wait(forDuration: bub.duration),
-                SKAction.removeFromParent()
                 ]), completion: {
+                    bub.bubble.run(SKAction.fadeAlpha(to: 0, duration: 0.10))
+                    bub.bubble.removeFromParent()
                     self.missedBubbles += 1
             })
         }

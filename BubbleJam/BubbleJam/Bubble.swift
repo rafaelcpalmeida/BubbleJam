@@ -24,7 +24,7 @@ class Bubble {
         
         self.x = Int(arc4random_uniform(UInt32((width - CGFloat(size)) - CGFloat(size))) + UInt32(size))
         
-        self.y = Int(arc4random_uniform(UInt32((height - CGFloat(size)) - CGFloat(size))) + UInt32(size))
+        self.y = Int(arc4random_uniform(UInt32(((height-20) - CGFloat(size)) - CGFloat(size))) + UInt32(size))
         
         self.path.addArc(center: CGPoint.zero,
                     radius: CGFloat(size),
